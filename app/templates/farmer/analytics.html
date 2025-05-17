@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Farmer Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-hand-holding-usd text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">${{ "%.2f"|format(total_active_amount) }}</h3>
+                            <p class="text-muted mb-0">Active Investments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">${{ "%.2f"|format(total_completed_amount) }}</h3>
+                            <p class="text-muted mb-0">Completed Investments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-chart-line text-info fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">${{ "%.2f"|format(total_returns) }}</h3>
+                            <p class="text-muted mb-0">Total Returns</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-percentage text-warning fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ "%.1f"|format(roi_percentage) }}%</h3>
+                            <p class="text-muted mb-0">ROI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment History -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Investment History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Investor</th>
+                                    <th>Amount</th>
+                                    <th>Duration</th>
+                                    <th>Interest Rate</th>
+                                    <th>Expected Return</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for investment in investments %}
+                                <tr>
+                                    <td>{{ investment.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ investment.investor.name }}</td>
+                                    <td>${{ "%.2f"|format(investment.amount) }}</td>
+                                    <td>{{ investment.duration }} months</td>
+                                    <td>{{ "%.1f"|format(investment.interest_rate) }}%</td>
+                                    <td>${{ "%.2f"|format(investment.amount * (1 + investment.interest_rate/100)) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ {
+                                            'seeking': 'warning',
+                                            'offered': 'info',
+                                            'active': 'success',
+                                            'completed': 'primary',
+                                            'rejected': 'danger',
+                                            'cancelled': 'secondary'
+                                        }[investment.status] }}">
+                                            {{ investment.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-info-circle fa-2x mb-2"></i>
+                                            <p class="mb-0">No investments found.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Sales History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Buyer</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in sales %}
+                                <tr>
+                                    <td>{{ sale.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ sale.product.name }}</td>
+                                    <td>{{ sale.buyer.name }}</td>
+                                    <td>{{ "%.1f"|format(sale.quantity) }} {{ sale.product.unit }}</td>
+                                    <td>${{ "%.2f"|format(sale.amount) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if sale.status == 'completed' else 'warning' }}">
+                                            {{ sale.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                            <p class="mb-0">No sales found.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

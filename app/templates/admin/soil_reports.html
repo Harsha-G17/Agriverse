@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Soil Reports Management{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Soil Reports Management</h2>
+    
+    <!-- Reports Table -->
+    <div class="card">
+        <div class="card-body">
+            {% if reports %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Farmer</th>
+                            <th>Report Date</th>
+                            <th>pH Level</th>
+                            <th>Nitrogen (N)</th>
+                            <th>Phosphorus (P)</th>
+                            <th>Potassium (K)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>{{ report.id }}</td>
+                            <td>{{ report.farmer.name }}</td>
+                            <td>{{ report.report_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ "%.2f"|format(report.ph_level) }}</td>
+                            <td>{{ "%.2f"|format(report.nitrogen_level) }}%</td>
+                            <td>{{ "%.2f"|format(report.phosphorus_level) }}%</td>
+                            <td>{{ "%.2f"|format(report.potassium_level) }}%</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if report.status == 'approved' else 'danger' if report.status == 'rejected' else 'warning' }}">
+                                    {{ report.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if report.status == 'pending' %}
+                                <a href="{{ url_for('admin.review_soil_report', report_id=report.id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-clipboard-check me-1"></i>Review
+                                </a>
+                                {% endif %}
+                                <a href="{{ report.report_file_url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <p class="text-muted">No soil reports found.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+</script>
+{% endblock %} 

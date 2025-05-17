@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Review Soil Report - Agriverse{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h2 class="h3 mb-2">Review Soil Report</h2>
+                            <p class="text-muted mb-0">Report #{{ report.id }} - {{ report.farmer.name }}</p>
+                        </div>
+                        <a href="{{ url_for('admin.soil_reports') }}" class="btn btn-outline-primary ms-auto">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Soil Parameters -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Soil Analysis Results</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="pH scale ranges from 0 (acidic) to 14 (alkaline). Ideal range for most crops is 6.0-7.0">
+                                        <i class="fas fa-flask text-primary me-2"></i>pH Level
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.ph_level) }}</h3>
+                                    <small class="text-muted">Scale: 0-14</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="Nitrogen is essential for leaf growth. Ideal range is 40-60%">
+                                        <i class="fas fa-atom text-success me-2"></i>Nitrogen Level
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.nitrogen_level) }}%</h3>
+                                    <small class="text-muted">Ideal: 40-60%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="Phosphorus is crucial for root development. Ideal range is 30-50%">
+                                        <i class="fas fa-leaf text-info me-2"></i>Phosphorus Level
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.phosphorus_level) }}%</h3>
+                                    <small class="text-muted">Ideal: 30-50%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="Potassium helps with overall plant health. Ideal range is 40-60%">
+                                        <i class="fas fa-seedling text-warning me-2"></i>Potassium Level
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.potassium_level) }}%</h3>
+                                    <small class="text-muted">Ideal: 40-60%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="Organic matter improves soil structure. Ideal range is 3-5%">
+                                        <i class="fas fa-tree text-success me-2"></i>Organic Matter
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.organic_matter) }}%</h3>
+                                    <small class="text-muted">Ideal: 3-5%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h6 class="card-title" data-bs-toggle="tooltip" title="Moisture content affects plant growth. Ideal range is 25-35%">
+                                        <i class="fas fa-tint text-primary me-2"></i>Moisture Content
+                                    </h6>
+                                    <h3 class="mb-0">{{ "%.2f"|format(report.moisture_content) }}%</h3>
+                                    <small class="text-muted">Ideal: 25-35%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Form -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Review Form</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('admin.update_soil_report', report_id=report.id) }}" method="POST">
+                        <div class="mb-4">
+                            <label class="form-label">Report File</label>
+                            <div>
+                                <a href="{{ report.report_file_url }}" class="btn btn-outline-primary w-100" target="_blank">
+                                    <i class="fas fa-file-alt me-2"></i>View Report
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="approved">Approve</option>
+                                <option value="rejected">Reject</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="5" placeholder="Add any notes or feedback...">{{ report.notes }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-check me-2"></i>Submit Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+</script>
+{% endblock %} 
