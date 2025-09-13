@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Prediction - Agriverse{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h1 class="h3 mb-2">Crop Prediction & Market Analysis</h1>
+                    <p class="text-muted mb-0">Get AI-powered recommendations for crop selection based on soil and weather data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Conditions -->
+    <div class="row g-4 mb-4">
+        <!-- Weather Card -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Current Weather</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-temperature-high text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ weather_data.temperature }}°C</h3>
+                            <p class="text-muted mb-0">Temperature</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-tint text-info fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ weather_data.humidity }}%</h3>
+                            <p class="text-muted mb-0">Humidity</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-cloud-rain text-success fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ weather_data.rainfall }}mm</h3>
+                            <p class="text-muted mb-0">Rainfall</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Soil Report Card -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Soil Analysis</h5>
+                </div>
+                <div class="card-body">
+                    {% if soil_report %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-flask text-warning fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ soil_report.ph_level }}</h3>
+                            <p class="text-muted mb-0">pH Level</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-atom text-danger fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ soil_report.nitrogen_level }}%</h3>
+                            <p class="text-muted mb-0">Nitrogen</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-leaf text-info fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">{{ soil_report.phosphorus_level }}%</h3>
+                            <p class="text-muted mb-0">Phosphorus</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-circle text-warning fa-3x mb-3"></i>
+                        <p class="text-muted mb-0">No soil report available. Please upload a soil report for better predictions.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Trends Card -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Market Trends</h5>
+                </div>
+                <div class="card-body">
+                    {% for crop, data in market_predictions.items() %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-chart-line text-success fa-2x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">{{ crop|title }}</h6>
+                                <span class="badge bg-{{ 'success' if data.trend == 'up' else 'danger' if data.trend == 'down' else 'secondary' }}">
+                                    {{ data.trend|title }}
+                                </span>
+                            </div>
+                            <p class="text-muted mb-0">${{ "%.2f"|format(data.price) }}/kg</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Crops -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Recommended Crops</h5>
+                </div>
+                <div class="card-body">
+                    {% if recommended_crops %}
+                    <div class="row g-4">
+                        {% for crop in recommended_crops %}
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                            <i class="fas fa-seedling text-primary fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">{{ crop.name }}</h5>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     style="width: {{ crop.confidence }}%" 
+                                                     aria-valuenow="{{ crop.confidence }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted mb-0">{{ crop.reason }}</p>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">Confidence: {{ crop.confidence }}%</span>
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="showMarketDetails('{{ crop.name }}')">
+                                            View Market Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-info-circle text-info fa-3x mb-3"></i>
+                        <p class="text-muted mb-0">No crop recommendations available. Please ensure you have uploaded a soil report.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Market Details Modal -->
+<div class="modal fade" id="marketDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Market Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="marketDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showMarketDetails(cropName) {
+    // In a real application, this would fetch data from an API
+    const marketData = {
+        'Rice': {
+            currentPrice: 45.50,
+            trend: 'up',
+            forecast: 'Expected to rise by 5% in the next month',
+            demand: 'High',
+            supply: 'Moderate'
+        },
+        'Wheat': {
+            currentPrice: 35.75,
+            trend: 'down',
+            forecast: 'Expected to stabilize in the next month',
+            demand: 'Moderate',
+            supply: 'High'
+        },
+        'Corn': {
+            currentPrice: 28.25,
+            trend: 'stable',
+            forecast: 'Prices expected to remain stable',
+            demand: 'High',
+            supply: 'High'
+        }
+    };
+
+    const data = marketData[cropName] || {
+        currentPrice: 0,
+        trend: 'unknown',
+        forecast: 'No data available',
+        demand: 'Unknown',
+        supply: 'Unknown'
+    };
+
+    const content = `
+        <div class="mb-3">
+            <h6>Current Market Price</h6>
+            <p class="mb-0">$${data.currentPrice}/kg</p>
+        </div>
+        <div class="mb-3">
+            <h6>Price Trend</h6>
+            <p class="mb-0">${data.trend.toUpperCase()}</p>
+        </div>
+        <div class="mb-3">
+            <h6>Market Forecast</h6>
+            <p class="mb-0">${data.forecast}</p>
+        </div>
+        <div class="mb-3">
+            <h6>Market Conditions</h6>
+            <p class="mb-0">Demand: ${data.demand}</p>
+            <p class="mb-0">Supply: ${data.supply}</p>
+        </div>
+    `;
+
+    document.getElementById('marketDetailsContent').innerHTML = content;
+    new bootstrap.Modal(document.getElementById('marketDetailsModal')).show();
+}
+
+// Refresh data every 5 minutes
+setInterval(() => {
+    location.reload();
+}, 300000);
+</script>
+{% endblock %} 

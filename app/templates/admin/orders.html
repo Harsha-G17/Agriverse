@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}Orders Management - Agriverse{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <h1 class="h3 mb-0">Orders Management</h1>
+                        <div class="ms-auto">
+                            <button class="btn btn-primary" onclick="refreshOrders()">
+                                <i class="fas fa-sync-alt me-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-shopping-cart text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1" id="totalOrders">0</h3>
+                            <p class="text-muted mb-0">Total Orders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-clock text-warning fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1" id="pendingOrders">0</h3>
+                            <p class="text-muted mb-0">Pending Orders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1" id="completedOrders">0</h3>
+                            <p class="text-muted mb-0">Completed Orders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-dollar-sign text-info fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1" id="totalRevenue">$0</h3>
+                            <p class="text-muted mb-0">Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search orders...">
+                <button class="btn btn-outline-secondary" type="button" onclick="searchOrders()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-end">
+                <select class="form-select w-auto" id="statusFilter" onchange="filterOrders()">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farmer Orders -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tractor me-2"></i>Farmer Orders
+                        <span class="badge bg-primary ms-2" id="farmerOrdersCount">0</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="farmerOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Buyer</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Farmer orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investor Orders -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Investor Orders
+                        <span class="badge bg-primary ms-2" id="investorOrdersCount">0</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="investorOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Buyer</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Investor orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let allOrders = {
+    farmer: [],
+    investor: []
+};
+
+// Format currency
+function formatCurrency(amount) {
+    return '$' + parseFloat(amount).toFixed(2);
+}
+
+// Format date
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleString();
+}
+
+// Update order statistics
+function updateOrderStats(stats) {
+    document.getElementById('totalOrders').textContent = stats.total_orders;
+    document.getElementById('pendingOrders').textContent = stats.pending_orders;
+    document.getElementById('completedOrders').textContent = stats.completed_orders;
+    document.getElementById('totalRevenue').textContent = formatCurrency(stats.total_revenue);
+}
+
+// Create order row HTML
+function createOrderRow(order) {
+    return `
+        <tr>
+            <td>#${order.id}</td>
+            <td>
+                <div class="d-flex align-items-center">
+                    ${order.product.image_url ? 
+                        `<img src="${order.product.image_url}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">` : 
+                        ''}
+                    <div>
+                        <div>${order.product.name}</div>
+                        <small class="text-muted">${order.product.category}</small>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div>${order.buyer.name}</div>
+                <small class="text-muted">${order.buyer.email}</small>
+            </td>
+            <td>${order.quantity} ${order.product.unit}</td>
+            <td>${formatCurrency(order.amount)}</td>
+            <td>
+                <span class="badge bg-${order.status === 'completed' ? 'success' : 
+                                   order.status === 'pending' ? 'warning' : 'danger'}">
+                    ${order.status.toUpperCase()}
+                </span>
+            </td>
+            <td>${formatDate(order.created_at)}</td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-info" onclick="viewOrderDetails(${order.id})" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    ${order.status === 'pending' ? `
+                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus(${order.id}, 'completed')" title="Mark as Completed">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="updateOrderStatus(${order.id}, 'failed')" title="Mark as Failed">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+// Filter orders
+function filterOrders() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+    // Filter farmer orders
+    const filteredFarmerOrders = allOrders.farmer.filter(order => {
+        const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        const matchesSearch = !searchTerm || 
+            order.id.toString().includes(searchTerm) ||
+            order.product.name.toLowerCase().includes(searchTerm) ||
+            order.buyer.name.toLowerCase().includes(searchTerm);
+
+        return matchesStatus && matchesSearch;
+    });
+
+    // Filter investor orders
+    const filteredInvestorOrders = allOrders.investor.filter(order => {
+        const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        const matchesSearch = !searchTerm || 
+            order.id.toString().includes(searchTerm) ||
+            order.product.name.toLowerCase().includes(searchTerm) ||
+            order.buyer.name.toLowerCase().includes(searchTerm);
+
+        return matchesStatus && matchesSearch;
+    });
+
+    // Update tables
+    updateOrdersTable(filteredFarmerOrders, 'farmerOrdersTable');
+    updateOrdersTable(filteredInvestorOrders, 'investorOrdersTable');
+
+    // Update counts
+    document.getElementById('farmerOrdersCount').textContent = filteredFarmerOrders.length;
+    document.getElementById('investorOrdersCount').textContent = filteredInvestorOrders.length;
+}
+
+// Update orders table
+function updateOrdersTable(orders, tableId) {
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    if (!tbody) return;
+
+    if (orders.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center py-4">
+                    <div class="text-muted">
+                        <i class="fas fa-box-open fa-2x mb-2"></i>
+                        <p class="mb-0">No orders found</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = orders.map(order => createOrderRow(order)).join('');
+}
+
+// Fetch and update orders
+function refreshOrders() {
+    fetch('/admin/orders/data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateOrderStats(data.stats);
+                allOrders.farmer = data.farmer_orders;
+                allOrders.investor = data.investor_orders;
+                filterOrders();
+            } else {
+                alert('Error loading orders: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching orders:', error);
+            alert('Error loading orders. Please try again.');
+        });
+}
+
+// View order details
+function viewOrderDetails(orderId) {
+    fetch(`/admin/orders/${orderId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const order = data;
+                const modalContent = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Product Details</h6>
+                            <p><strong>Name:</strong> ${order.product.name}</p>
+                            <p><strong>Category:</strong> ${order.product.category}</p>
+                            <p><strong>Quantity:</strong> ${order.quantity} ${order.product.unit}</p>
+                            <p><strong>Amount:</strong> ${formatCurrency(order.amount)}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Buyer Details</h6>
+                            <p><strong>Name:</strong> ${order.buyer.name}</p>
+                            <p><strong>Email:</strong> ${order.buyer.email}</p>
+                            <p><strong>Role:</strong> ${order.buyer.role.toUpperCase()}</p>
+                            <p><strong>Delivery Address:</strong> ${order.delivery_address}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Payment Details</h6>
+                            <p><strong>Method:</strong> ${order.payment_method.toUpperCase()}</p>
+                            <p><strong>Status:</strong> ${order.status.toUpperCase()}</p>
+                            <p><strong>Date:</strong> ${formatDate(order.created_at)}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('orderDetailsContent').innerHTML = modalContent;
+                new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+            } else {
+                alert('Error loading order details: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching order details:', error);
+            alert('Error loading order details. Please try again.');
+        });
+}
+
+// Update order status
+function updateOrderStatus(orderId, status) {
+    if (!confirm(`Are you sure you want to mark this order as ${status}?`)) {
+        return;
+    }
+
+    fetch(`/admin/orders/${orderId}/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            refreshOrders();
+        } else {
+            alert('Failed to update order status: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating order status:', error);
+        alert('Error updating order status. Please try again.');
+    });
+}
+
+// Search orders
+function searchOrders() {
+    filterOrders();
+}
+
+// Initial load
+refreshOrders();
+
+// Set up periodic refresh every 30 seconds
+setInterval(refreshOrders, 30000);
+
+// Add event listener for search input
+document.getElementById('searchInput').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        searchOrders();
+    }
+});
+</script>
+{% endblock %} 
