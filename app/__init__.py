@@ -36,22 +36,16 @@ def create_app(config_class=Config):
     from .routes.investor import investor_bp
     from .routes.admin import admin_bp
     from .routes.main import main_bp
-<<<<<<< HEAD
     from .routes.ml_api import ml_api_bp
     from .routes.ml_admin import ml_admin_bp
-=======
->>>>>>> 01443c27fc4416a644a7c6315cfed9eded618bf9
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(farmer_bp)
     app.register_blueprint(investor_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(main_bp)
-<<<<<<< HEAD
     app.register_blueprint(ml_api_bp)
     app.register_blueprint(ml_admin_bp)
-=======
->>>>>>> 01443c27fc4416a644a7c6315cfed9eded618bf9
     
     # Add template context processor
     @app.context_processor

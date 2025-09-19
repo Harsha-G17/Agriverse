@@ -17,12 +17,8 @@ Pillow==10.2.0
 pandas==2.2.1
 numpy==1.26.4
 matplotlib==3.8.3
-<<<<<<< HEAD
 scikit-learn==1.4.0
 joblib==1.3.2
 xgboost==2.0.3
 redis==5.0.1
 flask-caching==2.1.0 
-=======
-scikit-learn==1.4.0 
->>>>>>> 01443c27fc4416a644a7c6315cfed9eded618bf9

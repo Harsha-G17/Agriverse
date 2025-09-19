@@ -6,12 +6,9 @@ from ..models import db, Product, Investment, SoilReport, Transaction, GovScheme
 from datetime import datetime, timedelta
 from functools import wraps
 from sqlalchemy import func
-<<<<<<< HEAD
 from ..ml_models import CropPredictionModel, YieldForecastingModel, SoilAnalysisModel
 import pandas as pd
 import numpy as np
-=======
->>>>>>> 01443c27fc4416a644a7c6315cfed9eded618bf9
 
 farmer_bp = Blueprint('farmer', __name__)
 
@@ -513,7 +510,6 @@ def delete_product(product_id):
 @login_required
 @farmer_required
 def crop_prediction():
-<<<<<<< HEAD
     try:
         # Get farmer's latest soil report
         latest_soil_report = SoilReport.query.filter_by(
@@ -619,39 +615,6 @@ def crop_prediction():
         print(f"Error in crop prediction: {str(e)}")
         flash('An error occurred while generating crop predictions. Please try again.', 'error')
         return redirect(url_for('farmer.dashboard'))
-=======
-    # Get farmer's latest soil report
-    latest_soil_report = SoilReport.query.filter_by(
-        farmer_id=current_user.id
-    ).order_by(SoilReport.report_date.desc()).first()
-    
-    # Get weather data (you'll need to implement this with a weather API)
-    # For now, we'll use dummy data
-    weather_data = {
-        'temperature': 25,
-        'humidity': 65,
-        'rainfall': 0,
-        'season': 'summer'
-    }
-    
-    # Get market predictions (you'll need to implement this with a market API)
-    # For now, we'll use dummy data
-    market_predictions = {
-        'rice': {'price': 45.50, 'trend': 'up'},
-        'wheat': {'price': 35.75, 'trend': 'down'},
-        'corn': {'price': 28.25, 'trend': 'stable'},
-        'soybeans': {'price': 42.80, 'trend': 'up'}
-    }
-    
-    # Get recommended crops based on soil and weather
-    recommended_crops = get_recommended_crops(latest_soil_report, weather_data)
-    
-    return render_template('farmer/crop_prediction.html',
-                         soil_report=latest_soil_report,
-                         weather_data=weather_data,
-                         market_predictions=market_predictions,
-                         recommended_crops=recommended_crops)
->>>>>>> 01443c27fc4416a644a7c6315cfed9eded618bf9
 
 def get_recommended_crops(soil_report, weather_data):
     # This is a simplified recommendation system
