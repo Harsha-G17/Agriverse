@@ -2,7 +2,7 @@
 """
 Agriverse - AI-Powered Agricultural Intelligence Platform
 Unified Startup Script with Modern Frontend and Real-Time Capabilities
-Configured for: harshag1772004@gmail.com
+Configured for:
 """
 
 import os
