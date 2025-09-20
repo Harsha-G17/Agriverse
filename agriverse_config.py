@@ -2,7 +2,7 @@
 """
 Agriverse Unified Configuration System
 Complete configuration management with API keys, passwords, and environment setup
-Configured for: harshag1772004@gmail.com
+Configured for: ..
 """
 
 import os
@@ -60,7 +60,7 @@ def create_complete_config():
     
     # Create .env file
     env_content = f"""# Agriverse Environment Configuration
-# Generated for harshag1772004@gmail.com on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+# Generated for .. on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 # Application
 SECRET_KEY={get_config_value('SECRET_KEY', generate_if_missing=True)}
@@ -78,7 +78,7 @@ REDIS_URL=redis://localhost:6379/0
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USE_TLS=True
-MAIL_USERNAME=harshag1772004@gmail.com
+MAIL_USERNAME=..
 MAIL_PASSWORD={app_password}
 
 # Weather API (OpenWeatherMap) - Get your free key from https://openweathermap.org/api
@@ -116,7 +116,7 @@ LOG_FILE=logs/agriverse.log
     
     # Create production config
     prod_config = f"""# Production Configuration for Agriverse
-# Email: harshag1772004@gmail.com
+# Email: ..
 
 import os
 
@@ -129,7 +129,7 @@ class ProductionConfig:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'harshag1772004@gmail.com'
+    MAIL_USERNAME = '..'
     MAIL_PASSWORD = '{app_password}'
     
     # APIs
@@ -150,7 +150,7 @@ class ProductionConfig:
         f.write(prod_config)
     
     # Create API keys summary
-    api_summary = f"""# API Keys Summary for harshag1772004@gmail.com
+    api_summary = f"""# API Keys Summary for ..
 # Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## Generated API Keys:
@@ -227,7 +227,7 @@ def get_api_keys():
         'mail_server': os.getenv('MAIL_SERVER', 'smtp.gmail.com'),
         'mail_port': int(os.getenv('MAIL_PORT', 587)),
         'mail_use_tls': os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1'],
-        'mail_username': os.getenv('MAIL_USERNAME', 'harshag1772004@gmail.com'),
+        'mail_username': os.getenv('MAIL_USERNAME', '..'),
         'mail_password': os.getenv('MAIL_PASSWORD'),
         'stripe_publishable_key': os.getenv('STRIPE_PUBLISHABLE_KEY'),
         'stripe_secret_key': os.getenv('STRIPE_SECRET_KEY'),
@@ -252,7 +252,7 @@ def main():
     """Main configuration function"""
     print("🔑 Agriverse Unified Configuration System")
     print("=" * 50)
-    print("📧 Configured for: harshag1772004@gmail.com")
+    print("📧 Configured for: ..")
     print()
     
     # Create configuration
