@@ -1,5 +1,5 @@
 # Production Configuration for Agriverse
-# Email: harshag1772004@gmail.com
+# Email: 
 
 import os
 
@@ -12,7 +12,7 @@ class ProductionConfig:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'harshag1772004@gmail.com'
+    MAIL_USERNAME = '..'
     MAIL_PASSWORD = 'k3oKuqQB0jG^6gFluLGYUIf3'
     
     # APIs
