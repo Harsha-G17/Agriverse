@@ -1,139 +1,29 @@
-import os
-from dotenv import load_dotenv
+# Production Configuration for Agriverse
+# Email: harshag1772004@gmail.com
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+import os
 
 class ProductionConfig:
-    """
-    Production configuration for Agriverse with Oracle Cloud integration.
-    """
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'production-secret-key-change-this'
-    
-    # Oracle Cloud Database Configuration
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'oracle+oracledb://username:password@adb.us-ashburn-1.oraclecloud.com:1522/agriverse_prod'
-    
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size': 20,
-        'max_overflow': 30,
-        'pool_pre_ping': True,
-        'pool_recycle': 3600,
-        'connect_args': {
-            'encoding': 'utf-8',
-            'nencoding': 'utf-8'
-        }
-    }
-    
+    SECRET_KEY = '@q0x1vCkjz4XgQuzXUrV7E1FBNw5uoxd'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://agriverse:7%G9NvnQ9mdWBAl^O9q4@localhost/agriverse'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Mail settings
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    # Email
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = 'harshag1772004@gmail.com'
+    MAIL_PASSWORD = 'k3oKuqQB0jG^6gFluLGYUIf3'
     
-    # Stripe settings
-    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
-    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+    # APIs
+    WEATHER_API_KEY = 'OWM_WEATHER_HoqIUfM51aU1MFgy51MKSlBdKLBFHynhuOhY2s30'
+    OPENAI_API_KEY = 'sk-OPENAI_31riaUcpDdRM7NxjTPAFDzrFnC5F8CtlatmPdjnBqB8aIcwv'
+    DEEPSEEK_API_KEY = 'sk-DEEPSEEK_jHhOBICYiLDq27NZseMT5iaspUTGdmiA6hHOCptAxqZ0DYIi'
+    GOOGLE_MAPS_API_KEY = 'AIzaMAPS_4M7wKhNZaUWIbqoWGNggkEW3nKXMKubFZrk'
     
-    # Upload settings
-    UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+    # Stripe
+    STRIPE_PUBLISHABLE_KEY = 'pk_test_STRIPE_qCQU2cXD2zp1vUftK0QfOZl0'
+    STRIPE_SECRET_KEY = 'AZFB1TSRGQ8stwrNkgEFAySjNJ*NC7vF'
     
-    # Redis Configuration for Caching
-    REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
-    CACHE_TYPE = 'redis'
-    CACHE_REDIS_URL = REDIS_URL
-    CACHE_DEFAULT_TIMEOUT = 300  # 5 minutes
-    
-    # Oracle Cloud AI Services
-    OCI_CONFIG_PATH = os.environ.get('OCI_CONFIG_PATH', '~/.oci/config')
-    OCI_PROFILE = os.environ.get('OCI_PROFILE', 'DEFAULT')
-    
-    # ML Model Configuration
-    ML_MODEL_PATH = os.path.join(basedir, 'app', 'ml_models', 'saved_models')
-    ML_CACHE_TIMEOUT = 3600  # 1 hour
-    
-    # Security Settings
-    SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
-    
-    # Logging Configuration
-    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
-    LOG_FILE = os.environ.get('LOG_FILE', 'agriverse.log')
-    
-    # Performance Settings
-    JSON_SORT_KEYS = False
-    JSONIFY_PRETTYPRINT_REGULAR = False
-    
-    # API Rate Limiting
-    RATELIMIT_STORAGE_URL = REDIS_URL
-    RATELIMIT_DEFAULT = "1000 per hour"
-    
-    # CORS Settings
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*').split(',')
-    
-    # Monitoring and Analytics
-    ENABLE_METRICS = os.environ.get('ENABLE_METRICS', 'true').lower() == 'true'
-    METRICS_ENDPOINT = os.environ.get('METRICS_ENDPOINT', '/metrics')
-
-class DevelopmentConfig:
-    """
-    Development configuration for local development.
-    """
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-change-this-in-production'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'instance', 'agriverse.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
-    # Mail settings
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    
-    # Stripe settings
-    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
-    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
-    
-    # Upload settings
-    UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
-    
-    # Development settings
-    DEBUG = True
-    TESTING = False
-    
-    # ML Model Configuration
-    ML_MODEL_PATH = os.path.join(basedir, 'app', 'ml_models', 'saved_models')
-    ML_CACHE_TIMEOUT = 300  # 5 minutes for development
-
-class TestingConfig:
-    """
-    Testing configuration for unit tests.
-    """
-    SECRET_KEY = 'testing-secret-key'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    TESTING = True
-    WTF_CSRF_ENABLED = False
-    
-    # Disable mail sending during tests
-    MAIL_SUPPRESS_SEND = True
-    
-    # ML Model Configuration
-    ML_MODEL_PATH = os.path.join(basedir, 'app', 'ml_models', 'test_models')
-    ML_CACHE_TIMEOUT = 60  # 1 minute for testing
-
-# Configuration mapping
-config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': TestingConfig,
-    'default': DevelopmentConfig
-}
+    # Redis
+    REDIS_URL = 'redis://localhost:6379/0'

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Agriverse Real-Time Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-dashboard.css') }}">
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Background -->
+    <div id="particles-container"></div>
+    
+    <div class="dashboard-container">
+        <!-- Header Section -->
+        <div class="dashboard-header glass-card fade-in-up">
+            <h1 class="dashboard-title">🌱 Agriverse Real-Time Intelligence</h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: var(--space-lg);">
+                Advanced AI-Powered Agricultural Monitoring & Prediction System
+            </p>
+            
+            <div class="status-bar">
+                <div class="status-item status-online" id="connection-status">
+                    <div class="status-dot"></div>
+                    <span>WebSocket Connected</span>
+                </div>
+                <div class="status-item status-warning" id="data-status">
+                    <div class="status-dot"></div>
+                    <span>Data Stream Active</span>
+                </div>
+                <div class="status-item status-online" id="models-status">
+                    <div class="status-dot"></div>
+                    <span>AI Models Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="controls fade-in-up">
+            <button class="btn btn-primary" onclick="startService()">
+                <i class="fas fa-play"></i> Start Services
+            </button>
+            <button class="btn btn-success" onclick="getLatestData()">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+            <button class="btn btn-danger" onclick="stopService()">
+                <i class="fas fa-stop"></i> Stop Services
+            </button>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Soil Intelligence Card -->
+            <div class="data-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="card-title">Soil Intelligence</h3>
+                </div>
+                <div class="data-grid" id="soil-data">
+                    <div class="loading">Initializing soil sensors...</div>
+                </div>
+                <div class="timestamp" id="soil-timestamp"></div>
+            </div>
+
+            <!-- Weather Monitoring Card -->
+            <div class="data-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3 class="card-title">Weather Monitoring</h3>
+                </div>
+                <div class="data-grid" id="weather-data">
+                    <div class="loading">Connecting to weather stations...</div>
+                </div>
+                <div class="timestamp" id="weather-timestamp"></div>
+            </div>
+
+            <!-- Market Intelligence Card -->
+            <div class="data-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="card-title">Market Intelligence</h3>
+                </div>
+                <div class="data-grid" id="market-data">
+                    <div class="loading">Fetching market data...</div>
+                </div>
+                <div class="timestamp" id="market-timestamp"></div>
+            </div>
+
+            <!-- AI Crop Predictions Card -->
+            <div class="data-card prediction-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="card-title">AI Crop Predictions</h3>
+                </div>
+                <div id="crop-predictions">
+                    <div class="loading">Analyzing soil conditions...</div>
+                </div>
+                <div class="timestamp" id="predictions-timestamp"></div>
+            </div>
+
+            <!-- Yield Forecasting Card -->
+            <div class="data-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <h3 class="card-title">Yield Forecasting</h3>
+                </div>
+                <div id="yield-forecasts">
+                    <div class="loading">Calculating yield projections...</div>
+                </div>
+                <div class="timestamp" id="yield-timestamp"></div>
+            </div>
+
+            <!-- Soil Health Analysis Card -->
+            <div class="data-card glass-card fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3 class="card-title">Soil Health Analysis</h3>
+                </div>
+                <div id="soil-analysis">
+                    <div class="loading">Performing soil analysis...</div>
+                </div>
+                <div class="timestamp" id="analysis-timestamp"></div>
+            </div>
+
+            <!-- Real-Time Analytics Dashboard -->
+            <div class="data-card glass-card full-width fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="card-title">Real-Time Analytics Dashboard</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="realtime-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        const socket = io();
+        let realtimeChart = null;
+        let chartData = {
+            labels: [],
+            datasets: {
+                temperature: [],
+                humidity: [],
+                ph: [],
+                nitrogen: []
+            }
+        };
+
+        // Initialize dashboard with modern animations
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeParticles();
+            initializeWebSocket();
+            initializeChart();
+            getLatestData();
+            checkServiceStatus();
+            addScrollAnimations();
+        });
+
+        // Floating particles background
+        function initializeParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                createParticle(container);
+            }
+        }
+
+        function createParticle(container) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: ${Math.random() * 4 + 1}px;
+                height: ${Math.random() * 4 + 1}px;
+                background: rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1});
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: -1;
+                left: ${Math.random() * 100}vw;
+                top: ${Math.random() * 100}vh;
+                animation: float ${Math.random() * 20 + 10}s linear infinite;
+            `;
+            container.appendChild(particle);
+        }
+
+        // Add scroll animations
+        function addScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = '0.1s';
+                        entry.target.classList.add('fade-in-up');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.data-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        function initializeWebSocket() {
+            socket.on('connect', function() {
+                updateConnectionStatus('online', 'Connected');
+                console.log('Connected to WebSocket server');
+            });
+
+            socket.on('disconnect', function() {
+                updateConnectionStatus('offline', 'Disconnected');
+                console.log('Disconnected from WebSocket server');
+            });
+
+            socket.on('soil_data_update', function(data) {
+                updateSoilData(data.data);
+                updateTimestamp('soil-timestamp', data.timestamp);
+            });
+
+            socket.on('weather_data_update', function(data) {
+                updateWeatherData(data.data);
+                updateTimestamp('weather-timestamp', data.timestamp);
+            });
+
+            socket.on('market_data_update', function(data) {
+                updateMarketData(data.data);
+                updateTimestamp('market-timestamp', data.timestamp);
+            });
+
+            socket.on('crop_prediction_update', function(data) {
+                updateCropPredictions(data.data);
+                updateTimestamp('predictions-timestamp', data.timestamp);
+            });
+
+            socket.on('yield_prediction_update', function(data) {
+                updateYieldForecasts(data.data);
+                updateTimestamp('yield-timestamp', data.timestamp);
+            });
+
+            socket.on('soil_prediction_update', function(data) {
+                updateSoilAnalysis(data.data);
+                updateTimestamp('analysis-timestamp', data.timestamp);
+            });
+
+            socket.on('error', function(data) {
+                console.error('WebSocket error:', data.message);
+                showError(data.message);
+            });
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('realtime-chart').getContext('2d');
+            realtimeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Temperature (°C)',
+                            data: chartData.datasets.temperature,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Humidity (%)',
+                            data: chartData.datasets.humidity,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'pH Level',
+                            data: chartData.datasets.ph,
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Nitrogen (%)',
+                            data: chartData.datasets.nitrogen,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateConnectionStatus(status, text) {
+            const statusElement = document.getElementById('connection-status');
+            statusElement.className = `status-item status-${status}`;
+            statusElement.querySelector('span').textContent = text;
+        }
+
+        function updateDataStatus(status, text) {
+            const statusElement = document.getElementById('data-status');
+            statusElement.className = `status-item status-${status}`;
+            statusElement.querySelector('span').textContent = text;
+        }
+
+        function updateModelsStatus(status, text) {
+            const statusElement = document.getElementById('models-status');
+            statusElement.className = `status-item status-${status}`;
+            statusElement.querySelector('span').textContent = text;
+        }
+
+        function updateSoilData(data) {
+            const container = document.getElementById('soil-data');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="loading">No soil data available</div>';
+                return;
+            }
+
+            const latest = data[0]; // Get latest reading
+            
+            // Add animation to data items
+            container.innerHTML = `
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.1s both;">
+                    <div class="data-label">pH Level</div>
+                    <div class="data-value">${latest.ph_level.toFixed(1)}</div>
+                    <div class="data-unit">pH</div>
+                </div>
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.2s both;">
+                    <div class="data-label">Nitrogen</div>
+                    <div class="data-value">${latest.nitrogen_level.toFixed(1)}</div>
+                    <div class="data-unit">%</div>
+                </div>
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.3s both;">
+                    <div class="data-label">Phosphorus</div>
+                    <div class="data-value">${latest.phosphorus_level.toFixed(1)}</div>
+                    <div class="data-unit">%</div>
+                </div>
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.4s both;">
+                    <div class="data-label">Potassium</div>
+                    <div class="data-value">${latest.potassium_level.toFixed(1)}</div>
+                    <div class="data-unit">%</div>
+                </div>
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.5s both;">
+                    <div class="data-label">Organic Matter</div>
+                    <div class="data-value">${latest.organic_matter.toFixed(1)}</div>
+                    <div class="data-unit">%</div>
+                </div>
+                <div class="data-item" style="animation: fadeInUp 0.6s ease-out 0.6s both;">
+                    <div class="data-label">Moisture</div>
+                    <div class="data-value">${latest.moisture_content.toFixed(1)}</div>
+                    <div class="data-unit">%</div>
+                </div>
+            `;
+
+            // Update chart with smooth animation
+            updateChartData('ph', latest.ph_level);
+            updateChartData('nitrogen', latest.nitrogen_level);
+        }
+
+        function updateWeatherData(data) {
+            const container = document.getElementById('weather-data');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="loading">No weather data available</div>';
+                return;
+            }
+
+            const latest = data[0]; // Get latest reading
+            container.innerHTML = `
+                <div class="data-item">
+                    <div class="data-label">Temperature</div>
+                    <div class="data-value">${latest.temperature.toFixed(1)}°C</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Humidity</div>
+                    <div class="data-value">${latest.humidity.toFixed(1)}%</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Rainfall</div>
+                    <div class="data-value">${latest.rainfall.toFixed(1)}mm</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Wind Speed</div>
+                    <div class="data-value">${latest.wind_speed.toFixed(1)} m/s</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Pressure</div>
+                    <div class="data-value">${latest.pressure.toFixed(1)} hPa</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">UV Index</div>
+                    <div class="data-value">${latest.uv_index.toFixed(1)}</div>
+                </div>
+            `;
+
+            // Update chart
+            updateChartData('temperature', latest.temperature);
+            updateChartData('humidity', latest.humidity);
+        }
+
+        function updateMarketData(data) {
+            const container = document.getElementById('market-data');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="loading">No market data available</div>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(item => {
+                const changeClass = item.price_change >= 0 ? 'positive' : 'negative';
+                html += `
+                    <div class="data-item">
+                        <div class="data-label">${item.crop_name}</div>
+                        <div class="data-value">₹${item.current_price.toFixed(2)}</div>
+                        <div class="data-label" style="color: ${item.price_change >= 0 ? '#27ae60' : '#e74c3c'}">
+                            ${item.price_change >= 0 ? '+' : ''}${item.price_change.toFixed(2)}%
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updateCropPredictions(data) {
+            const container = document.getElementById('crop-predictions');
+            if (!data || !data.prediction) {
+                container.innerHTML = '<div class="loading">No predictions available</div>';
+                return;
+            }
+
+            const prediction = data.prediction;
+            if (prediction.error) {
+                container.innerHTML = `<div class="error">Error: ${prediction.error}</div>`;
+                return;
+            }
+
+            let html = '';
+            if (prediction.all_recommendations) {
+                prediction.all_recommendations.forEach(rec => {
+                    html += `
+                        <div class="prediction-item">
+                            <div class="prediction-crop">${rec.crop}</div>
+                            <div class="prediction-confidence">Confidence: ${(rec.probability * 100).toFixed(1)}%</div>
+                        </div>
+                    `;
+                });
+            } else {
+                html = `
+                    <div class="prediction-item">
+                        <div class="prediction-crop">${prediction.recommended_crop || 'Unknown'}</div>
+                        <div class="prediction-confidence">Confidence: ${(prediction.confidence * 100).toFixed(1)}%</div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function updateYieldForecasts(data) {
+            const container = document.getElementById('yield-forecasts');
+            if (!data || !data.prediction) {
+                container.innerHTML = '<div class="loading">No yield forecasts available</div>';
+                return;
+            }
+
+            const prediction = data.prediction;
+            if (prediction.error) {
+                container.innerHTML = `<div class="error">Error: ${prediction.error}</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-item">
+                    <div class="data-label">Predicted Yield</div>
+                    <div class="data-value">${prediction.predicted_yield.toFixed(0)} ${prediction.unit}</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Confidence</div>
+                    <div class="data-value">${(prediction.confidence * 100).toFixed(1)}%</div>
+                </div>
+            `;
+        }
+
+        function updateSoilAnalysis(data) {
+            const container = document.getElementById('soil-analysis');
+            if (!data || !data.analysis) {
+                container.innerHTML = '<div class="loading">No soil analysis available</div>';
+                return;
+            }
+
+            const analysis = data.analysis;
+            if (analysis.error) {
+                container.innerHTML = `<div class="error">Error: ${analysis.error}</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-item">
+                    <div class="data-label">Health Score</div>
+                    <div class="data-value">${analysis.health_score.toFixed(1)}/100</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Category</div>
+                    <div class="data-value">${analysis.health_category}</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Confidence</div>
+                    <div class="data-value">${(analysis.confidence * 100).toFixed(1)}%</div>
+                </div>
+            `;
+        }
+
+        function updateChartData(type, value) {
+            const now = new Date().toLocaleTimeString();
+            
+            // Add new data point
+            chartData.labels.push(now);
+            chartData.datasets[type].push(value);
+            
+            // Keep only last 20 data points
+            if (chartData.labels.length > 20) {
+                chartData.labels.shift();
+                chartData.datasets[type].shift();
+            }
+            
+            // Update chart
+            if (realtimeChart) {
+                realtimeChart.update('none');
+            }
+        }
+
+        function updateTimestamp(elementId, timestamp) {
+            const element = document.getElementById(elementId);
+            if (element && timestamp) {
+                const date = new Date(timestamp);
+                element.textContent = `Last updated: ${date.toLocaleTimeString()}`;
+            }
+        }
+
+        function showError(message) {
+            // Create error notification
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            errorDiv.style.position = 'fixed';
+            errorDiv.style.top = '20px';
+            errorDiv.style.right = '20px';
+            errorDiv.style.zIndex = '1000';
+            errorDiv.style.maxWidth = '300px';
+            
+            document.body.appendChild(errorDiv);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
+                }
+            }, 5000);
+        }
+
+        // API functions
+        async function getLatestData() {
+            try {
+                const response = await fetch('/api/realtime/data/latest');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateDataStatus('online', 'Data: Live');
+                    updateSoilData(data.data.soil_data);
+                    updateWeatherData(data.data.weather_data);
+                    updateMarketData(data.data.market_data);
+                } else {
+                    updateDataStatus('offline', 'Data: Error');
+                    showError(data.error);
+                }
+            } catch (error) {
+                updateDataStatus('offline', 'Data: Error');
+                showError('Failed to fetch latest data');
+            }
+        }
+
+        async function checkServiceStatus() {
+            try {
+                const response = await fetch('/api/realtime/sensors/status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const status = data.sensor_status.overall_status;
+                    updateDataStatus(status, `Data: ${status}`);
+                }
+            } catch (error) {
+                updateDataStatus('offline', 'Data: Error');
+            }
+
+            try {
+                const response = await fetch('/api/realtime/models/status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const models = data.models_status;
+                    const trainedCount = Object.values(models).filter(m => m.trained).length;
+                    updateModelsStatus('online', `Models: ${trainedCount}/3`);
+                }
+            } catch (error) {
+                updateModelsStatus('offline', 'Models: Error');
+            }
+        }
+
+        async function startService() {
+            try {
+                const response = await fetch('/api/realtime/start-service', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showError('Real-time service started successfully');
+                    setTimeout(checkServiceStatus, 2000);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError('Failed to start service');
+            }
+        }
+
+        async function stopService() {
+            try {
+                const response = await fetch('/api/realtime/stop-service', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showError('Real-time service stopped');
+                    setTimeout(checkServiceStatus, 2000);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError('Failed to stop service');
+            }
+        }
+
+        // Subscribe to data streams
+        socket.emit('subscribe', { room: 'soil_data' });
+        socket.emit('subscribe', { room: 'weather_data' });
+        socket.emit('subscribe', { room: 'market_data' });
+        socket.emit('subscribe', { room: 'crop_predictions' });
+        socket.emit('subscribe', { room: 'yield_forecasts' });
+        socket.emit('subscribe', { room: 'soil_analysis' });
+
+        // Refresh data every 30 seconds
+        setInterval(getLatestData, 30000);
+        setInterval(checkServiceStatus, 60000);
+    </script>
+</body>
+</html>

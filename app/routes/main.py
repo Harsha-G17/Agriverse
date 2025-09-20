@@ -21,7 +21,7 @@ def index():
             return redirect(url_for('investor.dashboard'))
         elif current_user.role == 'admin':
             return redirect(url_for('admin.dashboard'))
-    return render_template('main/index.html')
+    return render_template('modern_landing.html')
 
 @main_bp.route('/about')
 def about():
@@ -38,6 +38,12 @@ def terms():
 @main_bp.route('/privacy')
 def privacy():
     return render_template('main/privacy.html')
+
+@main_bp.route('/realtime-dashboard')
+@login_required
+def realtime_dashboard():
+    """Real-time agricultural dashboard"""
+    return render_template('realtime_dashboard.html')
 
 @main_bp.route('/marketplace')
 @login_required

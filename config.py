@@ -23,4 +23,25 @@ class Config:
     
     # Upload settings
     UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size 
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+    
+    # Real-time services configuration
+    WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    
+    # AI/ML Services
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+    DEEPSEEK_API_KEY = os.environ.get('DEEPSEEK_API_KEY')
+    
+    # Google Maps
+    GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+    
+    # Twilio
+    TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+    TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+    TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')
+    
+    # Real-time intervals
+    REALTIME_UPDATE_INTERVAL = int(os.environ.get('REALTIME_UPDATE_INTERVAL', 30))
+    MODEL_UPDATE_INTERVAL = int(os.environ.get('MODEL_UPDATE_INTERVAL', 300))
+    WEBSOCKET_PING_INTERVAL = int(os.environ.get('WEBSOCKET_PING_INTERVAL', 25)) 

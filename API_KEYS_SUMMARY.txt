@@ -1,0 +1,28 @@
+# API Keys Summary for harshag1772004@gmail.com
+# Generated on 2025-09-20 08:53:21
+
+## Generated API Keys:
+- Weather API: OWM_WEATHER_HoqIUfM51aU1MFgy51MKSlBdKLBFHynhuOhY2s30
+- OpenAI API: sk-OPENAI_31riaUcpDdRM7NxjTPAFDzrFnC5F8CtlatmPdjnBqB8aIcwv
+- DeepSeek API: sk-DEEPSEEK_jHhOBICYiLDq27NZseMT5iaspUTGdmiA6hHOCptAxqZ0DYIi
+- Google Maps: AIzaMAPS_4M7wKhNZaUWIbqoWGNggkEW3nKXMKubFZrk
+- Stripe Publishable: pk_test_STRIPE_qCQU2cXD2zp1vUftK0QfOZl0
+- Stripe Secret: AZFB1TSRGQ8stwrNkgEFAySjNJ*NC7vF
+
+## Generated Passwords:
+- App Password: k3oKuqQB0jG^6gFluLGYUIf3
+- Database Password: 7%G9NvnQ9mdWBAl^O9q4
+- Redis Password: lyovz@03v&t#Ccs%Mp
+
+## Next Steps:
+1. Get real OpenWeatherMap API key from: https://openweathermap.org/api
+2. Replace WEATHER_API_KEY in .env file
+3. Get OpenAI API key from: https://platform.openai.com/api-keys
+4. Replace OPENAI_API_KEY in .env file
+5. Run: python start_agriverse.py
+
+## Security Notes:
+- All passwords are randomly generated and secure
+- Store API keys securely
+- Never commit .env file to version control
+- Rotate passwords regularly
