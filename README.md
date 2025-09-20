@@ -121,7 +121,7 @@ Agriverse is a comprehensive AI-powered agricultural management platform connect
 
 7. **Run the application**
    ```bash
-  
+      Python run.py
   
    ```
 
