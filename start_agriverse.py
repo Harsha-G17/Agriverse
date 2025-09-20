@@ -17,7 +17,7 @@ def print_banner():
     print("🌱 AGRIVERSE - AI-Powered Agricultural Intelligence Platform 🌱")
     print("🌱" + "=" * 68 + "🌱")
     print("✨ Modern Frontend + Real-Time ML + Premium Design")
-    print("📧 Configured for: harshag1772004@gmail.com")
+    print("📧 Configured for: ")
     print("🕐 Started at:", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     print()
 
@@ -30,7 +30,7 @@ def setup_environment():
     os.environ['WEATHER_API_KEY'] = 'demo_weather_key_for_testing'
     os.environ['REDIS_URL'] = 'redis://localhost:6379/0'
     os.environ['DEBUG'] = 'True'
-    os.environ['MAIL_USERNAME'] = 'harshag1772004@gmail.com'
+    os.environ['MAIL_USERNAME'] = ''
     os.environ['MAIL_PASSWORD'] = 'Oupoc9$Xb6W9YroVdvwbrVwG'
     
     print("✅ Environment configured")
