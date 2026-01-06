@@ -56,7 +56,7 @@ Agriverse is a comprehensive AI-powered agricultural management platform connect
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/agriverse.git
+   git clone https://github.com/Harsha-G17/agriverse.git
    cd agriverse
    ```
 
